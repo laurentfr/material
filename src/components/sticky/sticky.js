@@ -30,7 +30,7 @@ function MaterialSticky($window, $document, $$rAF) {
 
 
   function registerStickyElement(scope, $el) {
-    scope.$on('$destroy', function() { registerStickyElement.$deregister($el); });
+    scope.$on('$destroy', function() { $deregister($el); });
     $el = Util.wrap($el, 'div', 'sticky-container'),
     $container = $el.controller('materialContent').$element;
 
@@ -57,24 +57,22 @@ function MaterialSticky($window, $document, $$rAF) {
       }
       scanElements($container);
     }
-  }
 
+    return $deregister;
 
-  // Deregister a sticky element, useful for $destroy event.
-  registerStickyElement.$deregister = function($el) {
-    var $container = $el.controller('materialContent').$element;
-    var elements = $container.data('$stickyEls') || [];
-    var innerElements = elements.map(function(el) { return el.children(0); });
-    var index = innerElements.indexOf($el);
-    if(index !== -1) {
-      elements[index].replaceWith($el);
-      elements.splice(index, 1);
-      if(elements.length === 0) {
-        $container.off('scroll', $container.data('$stickyCheck'));
+    // Deregister a sticky element, useful for $destroy event.
+    function $deregister($el) {
+      var innerElements = elements.map(function(el) { return el.children(0); });
+      var index = innerElements.indexOf($el);
+      if(index !== -1) {
+        elements[index].replaceWith($el);
+        elements.splice(index, 1);
+        if(elements.length === 0) {
+          $container.off('scroll', $container.data('$stickyCheck'));
+        }
       }
     }
-  };
-
+  }
   return registerStickyElement;
 
   function checkStickySupport($el) {
