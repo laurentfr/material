@@ -239,7 +239,7 @@ function MaterialSticky($window, $document, $$rAF) {
  * @module material.components.sticky
  *
  * @description
- * Directive to consume the $materialSticky directive
+ * Directive to consume the $materialSticky service
  *
  * @returns A material-sticky directive
  */
