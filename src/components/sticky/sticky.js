@@ -152,9 +152,9 @@ function MaterialSticky($window, $document, $$rAF) {
       targetElement().css({height: null});
       incrementElement();
       return;
-    } 
+
     //If we are going up, and our normal position would be rendered not sticky, un-sticky ourselves
-    else if(!scrollingDown && stickyActive && targetRect.top > 0) {
+    } else if(!scrollingDown && stickyActive && targetRect.top > 0) {
       targetElement().children(0).removeAttr('material-sticky-active');
       targetElement().css({height: null});
       incrementElement(-1);
@@ -162,9 +162,9 @@ function MaterialSticky($window, $document, $$rAF) {
       content.css({top: -1 * contentRect.height});
       targetElement().css({height: contentRect.height});
       return;
-    } 
+
     // If we are going off screen and haven't been made sticky yet, go sticky
-    else if(scrollingDown && contentRect.top <= 0 && !stickyActive) {
+    } else if(scrollingDown && contentRect.top <= 0 && !stickyActive) {
       content.attr('material-sticky-active', true);
       targetElement().css({height: contentRect.height});
       contentRect = rect(content);
@@ -181,8 +181,9 @@ function MaterialSticky($window, $document, $$rAF) {
     } 
 
     var nextRect, offsetAmount, currentTop;
+
+    // check if we need to push
     if(scrollingDown) {
-      // check if we need to push
       next = targetElement(+1);
       if(next) {
         nextRect = rect(next.children(0));
@@ -194,8 +195,8 @@ function MaterialSticky($window, $document, $$rAF) {
           content.css({top: currentTop - offsetAmount});
         }
       }
+    // Check if we need to pull
     } else if(targetElementIndex < orderedElements.length - 1 && contentRect.top < 0) {
-      // we need to pull
       nextRect = rect(targetElement(+1).children(0));
       offsetAmount = contentRect.bottom - nextRect.top;
       currentTop = content.css('top');
