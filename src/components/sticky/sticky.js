@@ -109,7 +109,7 @@ function MaterialSticky($window, $document, $$rAF) {
 
     // Iterate over our sorted elements and find the one that is active
     (function findTargetElement() {
-      var scroll = $container.scrollTop();
+      var scroll = $container.prop('scrollTop');
       for(var i = 0; i < orderedElements.length ; ++i) {
         if(rect(orderedElements[i]).bottom > 0) {
           targetElementIndex = i > 0 ? i - 1 : i;
@@ -135,7 +135,7 @@ function MaterialSticky($window, $document, $$rAF) {
     targetRect = rect(targetElement());
 
     var scrollingDown = false,
-        currentScroll = $container.scrollTop(),
+        currentScroll = $container.prop('scrollTop'),
         lastScroll = $sticky.lastScroll;
 
     if(currentScroll > (lastScroll || 0)) {
