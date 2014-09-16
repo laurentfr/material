@@ -124,19 +124,18 @@ function MaterialSticky($window, $document, $$rAF) {
   function checkElements($container) {
     var next; // pointer to next target
 
-    // Convenience getter for the target element
     var $sticky = $container.data('$sticky');
 
-    var targetElementIndex = $sticky.targetIndex,
-        orderedElements = $sticky.orderedElements;
+    var targetElementIndex = $sticky.targetIndex;
+    var orderedElements = $sticky.orderedElements;
 
     var content = targetElement().children(0);
-    var contentRect = rect(content),
-    targetRect = rect(targetElement());
+    var contentRect = rect(content);
+    var targetRect = rect(targetElement());
 
-    var scrollingDown = false,
-        currentScroll = $container.prop('scrollTop'),
-        lastScroll = $sticky.lastScroll;
+    var scrollingDown = false;
+    var currentScroll = $container.prop('scrollTop');
+    var lastScroll = $sticky.lastScroll;
 
     if(currentScroll > (lastScroll || 0)) {
       scrollingDown = true;
