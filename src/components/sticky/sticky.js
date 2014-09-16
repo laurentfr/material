@@ -48,7 +48,7 @@ function MaterialSticky($window, $document, $$rAF) {
       $el.css({position: browserStickySupport, top: '0px'});
     }
 
-    var debouncedCheck = $sticky.check || $$rAF.debounce(checkElements.bind(undefined, $container));
+    var debouncedCheck = $sticky.check || $$rAF.debounce(angular.bind(undefined, checkElements, $container));
     $sticky.check = debouncedCheck;
 
 
