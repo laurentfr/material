@@ -36,9 +36,10 @@ function MaterialSticky($window, $document, $$rAF) {
 
     if(!$container) { throw new Error('$materialSticky used outside of material-contant'); }
 
-    var elements = $container.data('$stickyEls') || [];
+    var $sticky = $container.data('$sticky') || {};
+    var elements = $sticky.elements || [];
     elements.push($el);
-    $container.data('$stickyEls', elements);
+    $sticky.elements = elements;
 
     // check sticky support on first register
     if(browserStickySupport === undefined) {
@@ -47,12 +48,13 @@ function MaterialSticky($window, $document, $$rAF) {
       $el.css({position: browserStickySupport, top: '0px'});
     }
 
-    var debouncedCheck = $container.data('$stickyCheck') || $$rAF.debounce(checkElements.bind(undefined, $container));
-    $container.data('$stickyCheck', debouncedCheck);
+    var debouncedCheck = $sticky.check || $$rAF.debounce(checkElements.bind(undefined, $container));
+    $sticky.check = debouncedCheck;
 
 
     if(!browserStickySupport) {
       if(elements.length == 1) {
+        $container.data('$sticky', $sticky);
         $container.on('scroll',  debouncedCheck);
       }
       scanElements($container);
@@ -68,7 +70,7 @@ function MaterialSticky($window, $document, $$rAF) {
         elements[index].replaceWith($el);
         elements.splice(index, 1);
         if(elements.length === 0) {
-          $container.off('scroll', $container.data('$stickyCheck'));
+          $container.off('scroll', $sticky.check);
         }
       }
     }
@@ -93,7 +95,8 @@ function MaterialSticky($window, $document, $$rAF) {
    * */
 
   function scanElements($container) {
-    var elements = $container.data('$stickyEls');
+    var $sticky = $container.data('$sticky');
+    var elements = $sticky.elements;
     if(browserStickySupport) return; // don't need to do anything if we have native sticky
     targetElementIndex = 0;
     // Sort based on position in the window, and assign an active index
@@ -101,19 +104,20 @@ function MaterialSticky($window, $document, $$rAF) {
       return rect(a).top - rect(b).top;
     });
 
-    $container.data('$stickyOrderedEls', orderedElements);
+    $sticky.orderedElements = orderedElements;
+
 
     // Iterate over our sorted elements and find the one that is active
     (function findTargetElement() {
       var scroll = $container.scrollTop();
       for(var i = 0; i < orderedElements.length ; ++i) {
-        if(rect(orderedElements[i].children(0)).bottom > 0) {
+        if(rect(orderedElements[i]).bottom > 0) {
           targetElementIndex = i > 0 ? i - 1 : i;
         } else {
           targetElementIndex = i;
         }
       }
-      $container.data('$stickyTarget', targetElementIndex);
+      $sticky.targetIndex = targetElementIndex;
     })();
   }
 
@@ -121,8 +125,10 @@ function MaterialSticky($window, $document, $$rAF) {
     var next; // pointer to next target
 
     // Convenience getter for the target element
-    var targetElementIndex = $container.data('$stickyTarget'),
-        orderedElements = $container.data('$stickyOrderedEls');
+    var $sticky = $container.data('$sticky');
+
+    var targetElementIndex = $sticky.targetIndex,
+        orderedElements = $sticky.orderedElements;
 
     var content = targetElement().children(0);
     var contentRect = rect(content),
@@ -130,12 +136,12 @@ function MaterialSticky($window, $document, $$rAF) {
 
     var scrollingDown = false,
         currentScroll = $container.scrollTop(),
-        lastScroll = $container.data('$stickyLastScroll');
+        lastScroll = $sticky.lastScroll;
 
-    if(currentScroll > ($container.data('$stickyLastScroll') || 0)) {
+    if(currentScroll > (lastScroll || 0)) {
       scrollingDown = true;
     }
-    $container.data('$stickyLastScroll', currentScroll);
+    $sticky.lastScroll = currentScroll;
 
     var stickyActive = content.attr('material-sticky-active');
 
@@ -200,7 +206,7 @@ function MaterialSticky($window, $document, $$rAF) {
       targetElementIndex += inc;
       content = targetElement().children(0);
       contentRect = rect(content);
-      $container.data('$stickyTarget', targetElementIndex);
+      $sticky.targetIndex = targetElementIndex;
     }
 
     function targetElement(indexModifier) {
