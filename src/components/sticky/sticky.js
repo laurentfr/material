@@ -159,7 +159,8 @@ function MaterialSticky($window, $document, $$rAF) {
       targetElement().css({height: null});
       incrementElement(-1);
       content.attr('material-sticky-active', true);
-      content.css({top: -1 * contentRect.height});
+      content.css({transform: 'translate3d(0, ' + -1*contentRect.height + 'px, 0'});
+      content.data('translatedHeight', -1*contentRect.height);
       targetElement().css({height: contentRect.height});
       return;
 
@@ -176,11 +177,13 @@ function MaterialSticky($window, $document, $$rAF) {
           offset = nextRect.top - contentRect.bottom;
         }
       }
-      content.css({top: Math.min(offset, 0)});
+      offset = Math.min(offset, 0);
+      content.css({transform: 'translate3d(0, ' + offset + 'px, 0'});
+      content.data('translatedHeight', offset);
       return;
     } 
 
-    var nextRect, offsetAmount, currentTop;
+    var nextRect, offsetAmount, currentTop, translateAmt;
 
     // check if we need to push
     if(scrollingDown) {
@@ -189,20 +192,20 @@ function MaterialSticky($window, $document, $$rAF) {
         nextRect = rect(next.children(0));
         if(rectsAreTouching(contentRect, nextRect)) {
           offsetAmount = contentRect.bottom - nextRect.top;
-          currentTop = content.css('top');
-          if(currentTop == 'auto') { currentTop = 0; }
-          else { currentTop = parseInt(currentTop, 10); }
-          content.css({top: currentTop - offsetAmount});
+          currentTop = content.data('translatedHeight') || 0;
+          translateAmt = currentTop - offsetAmount;
+          content.css({transform: 'translate3d(0, ' + translateAmt + 'px, 0'});
+          content.data('translatedHeight', translateAmt);
         }
       }
     // Check if we need to pull
     } else if(targetElementIndex < orderedElements.length - 1 && contentRect.top < 0) {
       nextRect = rect(targetElement(+1).children(0));
       offsetAmount = contentRect.bottom - nextRect.top;
-      currentTop = content.css('top');
-      if(currentTop == 'auto') { currentTop = 0; }
-      else { currentTop = parseInt(currentTop, 10); }
-      content.css({top: Math.min(currentTop - offsetAmount, 0)});
+      currentTop = content.data('translatedHeight') || 0;
+      translateAmt = Math.min(currentTop - offsetAmount, 0);
+      content.css({transform: 'translate3d(0, ' + translateAmt + 'px, 0'});
+      content.data('translatedHeight', translateAmt);
     }
 
     function incrementElement(inc) {
