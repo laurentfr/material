@@ -11,6 +11,8 @@ function linkTabPagination(scope, element, tabsCtrl, $q, $materialEffects ) {
   var TAB_MIN_WIDTH = 8 * 12;           // Must match tab min-width rule in _tabs.scss
   var PAGINATORS_WIDTH = (8 * 4) * 2;   // Must match (2 * width of paginators) in scss
 
+  TAB_MIN_WIDTH = 10;
+  
   var tabsHeader = findNode('.tabs-header-items-container', element); // excludes paginators
   var buttonBar = findNode('.tabs-header-items', element);
   var pagination = scope.pagination = {
